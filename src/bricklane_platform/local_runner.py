@@ -13,10 +13,19 @@ from bricklane_platform.util import generate_csv
 
 
 def main(csv_path, source, share_price):
-
-    payment_processor = PaymentProcessor()
-    payments = payment_processor.get_payments(csv_path, source)
-    eligible_payments = payment_processor.verify_payments(payments)
+    if csv_path.find("card") >= 0:
+        print "Procesing Card Payments..."
+        payment_processor = PaymentProcessor()
+        payments = payment_processor.get_payments(csv_path, source)
+        eligible_payments = payment_processor.verify_payments(payments)
+    elif csv_path.find("bank") >= 0:
+        print "Procesing Bank Payments..."
+        payment_processor = PaymentProcessor()
+        payments = payment_processor.get_bank_payments(csv_path, source)
+        eligible_payments = payment_processor.verify_payments(payments)
+    else:
+        print "Unsupported CSV document"
+        return
 
     share_engine = ShareEngine()
     share_orders = share_engine.generate_share_orders(share_price, eligible_payments)
